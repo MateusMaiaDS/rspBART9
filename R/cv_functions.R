@@ -162,49 +162,49 @@ all_bart_lite <- function(cv_element,
   # # Removing the model
   # rm(spBART)
 
-  if(rsp_bart_all_){
-    # Running the model
-    spBART <- rspBART(x_train = x_train,
-                      x_test = x_test,y_train = y_train,
-                      n_mcmc = 2500,node_min_size = 5,alpha = alpha_,
-                      n_burn = 0,nIknots = nIknots_,n_tree = ntree_,
-                      use_bs = use_bs_,all_var = rsp_bart_all_,
-                      stump = FALSE,dif_order = 1,
-                      motrbart_bool = motr_bart_,
-                      scale_init = scale_init_,
-                      update_tau_beta = update_tau_beta_)
+
+  # Running the model
+  spBART <- rspBART(x_train = x_train,
+                    x_test = x_test,y_train = y_train,
+                    n_mcmc = 2500,node_min_size = 5,alpha = alpha_,
+                    n_burn = 0,nIknots = nIknots_,n_tree = ntree_,
+                    use_bs = use_bs_,all_var = rsp_bart_all_,
+                    stump = FALSE,dif_order = 1,
+                    motrbart_bool = motr_bart_,
+                    scale_init = scale_init_,
+                    update_tau_beta = update_tau_beta_)
 
 
-    n_burn_ <- 500
-    n_mcmc_ <- spBART$mcmc$n_mcmc
+  n_burn_ <- 500
+  n_mcmc_ <- spBART$mcmc$n_mcmc
 
-    # Calculating metrics for splinesBART
-    comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "rmse_train",
-                                                              value = rmse(x = colMeans(spBART$y_train_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
-                                                                           y = train$y),
-                                                              model = "spBART_all",fold = j))
+  # Calculating metrics for splinesBART
+  comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "rmse_train",
+                                                            value = rmse(x = colMeans(spBART$y_train_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
+                                                                         y = train$y),
+                                                            model = "spBART_pred",fold = j))
 
-    comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "rmse_test",
-                                                              value = rmse(x = colMeans(spBART$y_test_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
-                                                                           y = test$y),
-                                                              model = "spBART_all",fold = j))
+  comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "rmse_test",
+                                                            value = rmse(x = colMeans(spBART$y_test_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
+                                                                         y = test$y),
+                                                            model = "spBART_pred",fold = j))
 
-    # Calculating the CRPS as well
-    comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "crps_train",
-                                                              value = crps(y = train$y ,
-                                                                           means = colMeans(spBART$y_train_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
-                                                                           sds = rep(mean(spBART$all_tau[(n_burn_+1):n_mcmc_])^(-1/2), length(train$y)))$CRPS,
-                                                              model = "spBART_all",fold = j))
+  # Calculating the CRPS as well
+  comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "crps_train",
+                                                            value = crps(y = train$y ,
+                                                                         means = colMeans(spBART$y_train_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
+                                                                         sds = rep(mean(spBART$all_tau[(n_burn_+1):n_mcmc_])^(-1/2), length(train$y)))$CRPS,
+                                                            model = "spBART_pred",fold = j))
 
-    comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "crps_test",
-                                                              value = crps(y = test$y ,
-                                                                           means = colMeans(spBART$y_test_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
-                                                                           sds = rep(mean(spBART$all_tau[(n_burn_+1):n_mcmc_])^(-1/2), length(test$y)))$CRPS,
-                                                              model = "spBART_all",fold = j))
+  comparison_metrics <- rbind(comparison_metrics,data.frame(metric = "crps_test",
+                                                            value = crps(y = test$y ,
+                                                                         means = colMeans(spBART$y_test_hat[(n_burn_+1):n_mcmc_,,drop = FALSE]),
+                                                                         sds = rep(mean(spBART$all_tau[(n_burn_+1):n_mcmc_])^(-1/2), length(test$y)))$CRPS,
+                                                            model = "spBART_pred",fold = j))
 
-    # Removing the model
-    rm(spBART)
-  }
+  # Removing the model
+  rm(spBART)
+
 
 
   #   if(rsp_bart_all_){

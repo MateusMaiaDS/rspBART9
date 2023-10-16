@@ -271,7 +271,7 @@ grow <- function(tree,
                           left = NA,
                           right = NA,
                           parent_node = g_node_name,
-                          ancestors = c(g_node$ancestors,p_var),
+                          ancestors = unique(c(g_node$ancestors,p_var)),
                           terminal = TRUE,
                           betas_vec = rep(0,ncol(data$D_train)))
 
@@ -285,7 +285,7 @@ grow <- function(tree,
                            left = NA,
                            right = NA,
                            parent_node = g_node_name,
-                           ancestors = c(g_node$ancestors,p_var),
+                           ancestors = unique(c(g_node$ancestors,p_var)),
                            terminal = TRUE,
                            betas_vec = rep(0,ncol(data$D_train)))
     } else {
@@ -572,7 +572,7 @@ prune_predictors <- function(tree,
   p_node <- tree[[p_node_name]]
 
   # Getting the indexes from the left and right children from the pruned node
-  if(length(candidates)==1){
+  if(length(unique(tree[[p_node$left]]$ancestors))==1){
     return(tree)
   } else {
     p_var_prune <- sample(tree[[p_node$left]]$ancestors,size = 1)
@@ -878,14 +878,14 @@ change <- function(tree,
     tree[[c_node$left]]$node_cutpoint_index <- sample_cutpoint
     tree[[c_node$left]]$train_index <- left_index
     tree[[c_node$left]]$test_index <- left_test_index
-    tree[[c_node$left]]$ancestors <- new_left_ancestors
+    tree[[c_node$left]]$ancestors <- unique(new_left_ancestors)
 
     #==== Right ====
     tree[[c_node$right]]$node_var <- p_var
     tree[[c_node$right]]$node_cutpoint_index <- sample_cutpoint
     tree[[c_node$right]]$train_index <- right_index
     tree[[c_node$right]]$test_index <- right_test_index
-    tree[[c_node$right]]$ancestors <- new_right_ancestors
+    tree[[c_node$right]]$ancestors <- unique(new_right_ancestors)
 
   } else {
 

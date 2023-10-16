@@ -42,6 +42,10 @@ rspBART <- function(x_train,
   }
 
 
+  if(all_var){
+    stop("Wrong version. To use all variables call rspBART8")
+  }
+
   # Getting the valid
   dummy_x <- base_dummyVars(x_train)
 
@@ -503,23 +507,23 @@ rspBART <- function(x_train,
       # selected_var_ <- 9
       # plot(data$x_train[,selected_var_],tree_predictions$y_train_hat[,selected_var_])
 
-      choose_dimension <- 8
-      if(t==1){
-        plot(x_train_scale[,choose_dimension],tree_predictions$y_train_hat[,choose_dimension], pch = 20, main = paste0("X",choose_dimension," partial pred"),ylim = c(range(y_scale)),
-             col = ggplot2::alpha("black",0.2))
-      } else {
-        points(x_train_scale[,choose_dimension],tree_predictions$y_train_hat[,choose_dimension], pch=20, col = ggplot2::alpha(t,0.2))
-      }
-      trees_fit[t,] <- rowSums(tree_predictions$y_train_hat)
-      trees_fit_test[t,] <- rowSums(tree_predictions$y_hat_test)
-      partial_train_fits[[t]] <- tree_predictions$y_train_hat
-
-      x1_pred <- x1_pred + tree_predictions$y_train_hat[,choose_dimension]
+      # choose_dimension <- 8
+      # if(t==1){
+      #   plot(x_train_scale[,choose_dimension],tree_predictions$y_train_hat[,choose_dimension], pch = 20, main = paste0("X",choose_dimension," partial pred"),ylim = c(range(y_scale)),
+      #        col = ggplot2::alpha("black",0.2))
+      # } else {
+      #   points(x_train_scale[,choose_dimension],tree_predictions$y_train_hat[,choose_dimension], pch=20, col = ggplot2::alpha(t,0.2))
+      # }
+      # trees_fit[t,] <- rowSums(tree_predictions$y_train_hat)
+      # trees_fit_test[t,] <- rowSums(tree_predictions$y_hat_test)
+      # partial_train_fits[[t]] <- tree_predictions$y_train_hat
+      #
+      # x1_pred <- x1_pred + tree_predictions$y_train_hat[,choose_dimension]
 
     }
 
-    points(x_train_scale[,choose_dimension],x1_pred, pch=20, col = "blue")
-    x1_pred <- numeric(nrow(x_train))
+    # points(x_train_scale[,choose_dimension],x1_pred, pch=20, col = "blue")
+    # x1_pred <- numeric(nrow(x_train))
 
     # Getting final predcition
     y_hat <- colSums(trees_fit)
