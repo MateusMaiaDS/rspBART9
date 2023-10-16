@@ -694,7 +694,7 @@ change_predictors <- function(tree = tree,
   } else { # When we do not have an stump
 
     # Need to select one from the available
-    single_new_ancestor <- sample(candidates,size = 1)
+    single_new_ancestor <- sample(change_candidates,size = 1)
     replace_old_ancestor_index <- sample(1:length(tree[[c_node$left]]$ancestors),size = 1)
     new_ancestor <- tree[[c_node$left]]$ancestors
     new_ancestor[replace_old_ancestor_index] <- single_new_ancestor
