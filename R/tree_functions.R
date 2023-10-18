@@ -936,7 +936,9 @@ updateBetas <- function(tree,
     #  Calculating the quantities need to the posterior of \beta
     b_ <- crossprod(D_leaf,res_leaf)
     data_tau_beta_diag <- rep(data$tau_beta, NCOL(D_leaf))
-    Q_ <- (crossprod(D_leaf) + diag(data_tau_beta_diag/data$tau, nrow = NCOL(D_leaf)))
+    U_ <- data$P[leaf_basis_subindex,leaf_basis_subindex, drop = FALSE]
+    U_inv_ <- chol2inv(chol(U_))
+    Q_ <- (crossprod(D_leaf) + data$tau^(-1)*U_inv_)
     Q_inv_ <- chol2inv(chol(Q_))
     # Q_inv_ <- solve(Q_)
 
