@@ -240,7 +240,7 @@ rspBART <- function(x_train,
     # Maybe need to change that in the future
 
     # tau_mu <- 4*n_tree*(kappa^2)
-    tau_mu <- 4*n_tree*(kappa^2)*(m_tilda)*(nIknots-1)
+    tau_mu <- 4*n_tree*(kappa^2)*(m_tilda)
 
 
 
@@ -250,7 +250,8 @@ rspBART <- function(x_train,
     # New parameter update
     m_tilda <- mean(diag(tcrossprod(D_train)))
     tau_mu <- (4*n_tree*(kappa^2))/((max_y-min_y)^2)
-    tau_mu <- (4*n_tree*(kappa^2)*(m_tilda)*(nIknots-1))/((max_y-min_y)^2)
+    # tau_mu <- (4*n_tree*(kappa^2)*(m_tilda)*(nIknots-1))/((max_y-min_y)^2)
+    tau_mu <- (4*n_tree*(kappa^2)*(m_tilda))/((max_y-min_y)^2)
 
 
   }
@@ -270,14 +271,14 @@ rspBART <- function(x_train,
 
   # Getting hyperparameters for \tau_beta_j
   # df <- 10
-  a_tau_beta_j <- tau_mu
-  # sigquant_beta <- 0.99
-  # nsigma_beta <- tau_mu^(-1/2)
+  a_tau_beta_j <- df/2
+  sigquant_beta <- 0.99
+  nsigma_beta <- tau_mu^(-1/2)
 
   # Calculating lambda
-  # qchi_beta <- stats::qchisq(p = 1-sigquant_beta,df = df,lower.tail = 1,ncp = 0)
-  # lambda_beta <- (nsigma_beta*nsigma_beta*qchi_beta)/df
-  d_tau_beta_j <- 1
+  qchi_beta <- stats::qchisq(p = 1-sigquant_beta,df = df,lower.tail = 1,ncp = 0)
+  lambda_beta <- (nsigma_beta*nsigma_beta*qchi_beta)/df
+  d_tau_beta_j <- (lambda_beta*df)/2
 
 
 
@@ -358,7 +359,8 @@ rspBART <- function(x_train,
   # Creating the penalty matrix
 
   all_P <- replicate(NCOL(x_train_scale),
-                     P_gen(D_train_ = B_train_obj,dif_order_ = dif_order,tau_mu_ = tau_mu),simplify = FALSE)
+                     P_gen(D_train_ = B_train_obj,dif_order_ = dif_order,tau_mu_ = 1),
+                     simplify = FALSE)
 
   P_train <- as.matrix(Matrix::bdiag(all_P))
 
@@ -430,6 +432,7 @@ rspBART <- function(x_train,
     progress <- i / n_mcmc * 100
 
     x1_pred <- numeric(nrow(x_train))
+
     for(t in 1:data$n_tree){
 
       # Calculating the partial residuals
@@ -507,7 +510,7 @@ rspBART <- function(x_train,
       # selected_var_ <- 9
       # plot(data$x_train[,selected_var_],tree_predictions$y_train_hat[,selected_var_])
 
-      if(!plot_preview){
+      if(plot_preview){
           choose_dimension <- 1
           if(t==1){
             plot(x_train_scale[,choose_dimension],tree_predictions$y_train_hat[,choose_dimension], pch = 20, main = paste0("X",choose_dimension," partial pred"),ylim = range(y_scale),
@@ -523,7 +526,7 @@ rspBART <- function(x_train,
       }
     }
 
-    if(!plot_preview){
+    if(plot_preview){
       points(x_train_scale[,choose_dimension],x1_pred, pch=20, col = "blue")
       x1_pred <- numeric(nrow(x_train))
     }
